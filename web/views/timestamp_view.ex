@@ -21,22 +21,17 @@ defmodule Timestamp.TimestampView do
   end
 
   defp map_response(date) do
-    if unix_parse(date) do
+    if valid_date?(date) do
       %{
-        unix: unix_parse(date),
+        unix: valid_date?(date),
         natural: natural_date(date)
       }
     else
       %{
-        unix: unix_parse(date),
+        unix: valid_date?(date),
         natural: nil
       }
     end
-  end
-
-  defp unix_parse(date) do
-    # call that private func
-    valid_date?(date)
   end
 
   defp natural_date(date) do
