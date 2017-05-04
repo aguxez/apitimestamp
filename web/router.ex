@@ -5,7 +5,7 @@ defmodule Timestamp.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", Timestamp do
+  scope "/", Timestamp do
     pipe_through :api
 
     get "/:date", TimestampController, :index
