@@ -47,26 +47,31 @@ defmodule Timestamp.TimestampView do
       date
       |> String.replace(" ", "/")
 
-    # Processing
-    month_name = parsed_date |> String.split("/") |> Enum.at(0)
-    # {key, month_number} = Enum.find(@month, fn{key, _val} -> key == String.downcase(month_name) end)
+    if date |> String.split(" ") |> Enum.at(2) |> String.to_integer < 1970 || 
+       date |> String.split(" ") |> Enum.at(2) |> String.to_integer >= 2038 do
+      nil
+    else
+      # Processing
+      month_name = parsed_date |> String.split("/") |> Enum.at(0)
+      # {key, month_number} = Enum.find(@month, fn{key, _val} -> key == String.downcase(month_name) end)
 
-    case Enum.find(@month, fn{key, _val} -> key == String.downcase(month_name) end) do
-      {key, month_number} ->
-        filter_month_name = parsed_date |> String.split("/") |> Enum.slice(-2..-1) |> Enum.join("/")
+      case Enum.find(@month, fn{key, _val} -> key == String.downcase(month_name) end) do
+        {key, month_number} ->
+          filter_month_name = parsed_date |> String.split("/") |> Enum.slice(-2..-1) |> Enum.join("/")
 
-        # Convert to NaiveDate and get unix timestamp
-        case Timex.parse("#{month_number}/#{filter_month_name} 01:00 AM", "{0M}/{0D}/{YYYY} {h12}:{m} {AM}") do
-          {:ok, struct} ->
-            struct
-            |> DateTime.from_naive!("Etc/UTC") 
-            |> DateTime.to_unix() 
-            |> Integer.to_string()
-          {:error, _reason} ->
-            nil
-        end
-      _ ->
-        nil
+          # Convert to NaiveDate and get unix timestamp
+          case Timex.parse("#{month_number}/#{filter_month_name} 01:00 AM", "{0M}/{0D}/{YYYY} {h12}:{m} {AM}") do
+            {:ok, struct} ->
+              struct
+              |> DateTime.from_naive!("Etc/UTC") 
+              |> DateTime.to_unix() 
+              |> Integer.to_string()
+            {:error, _reason} ->
+              nil
+          end
+        _ ->
+          nil
+      end
     end
   end
 end
